@@ -4,6 +4,7 @@
 #
 #    pip-compile requirements_test.in
 #
+atomicwrites==1.3.0       # via pytest
 attrs==19.3.0
 certifi==2018.1.18
 cffi==1.13.1
@@ -15,24 +16,26 @@ entrypoints==0.3          # via flake8
 flake8==3.7.9
 hypothesis==4.42.0
 idna==2.6
+importlib-metadata==0.23  # via pluggy, pytest
 mccabe==0.6.1             # via flake8
-mock==2.0.0               # via responses
+more-itertools==7.2.0     # via pytest, zipp
 netaddr==0.7.19
 olefile==0.45.1
-pbr==3.1.1                # via mock
+packaging==19.2           # via pytest
 pillow==4.3.0
+pluggy==0.13.0            # via pytest
 py==1.5.2                 # via pytest
 pycodestyle==2.5.0        # via flake8
 pycparser==2.18
 pyflakes==2.1.1           # via flake8
 pyjwt==1.5.3
-pytest-cov==2.5.1
-pytest==3.1.3
+pyparsing==2.4.2          # via packaging
+pytest-cov==2.8.1
+pytest==5.2.2
 requests==2.18.4
-responses==0.3.0
+responses==0.10.6
 six==1.11.0
 urllib3==1.22
+wcwidth==0.1.7            # via pytest
 werkzeug==0.14.1
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.6.0        # via pytest
+zipp==0.6.0               # via importlib-metadata
