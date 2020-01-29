@@ -77,13 +77,16 @@ class ImageInfo(JP2Extractor):
         src_format (str): the format of the source image file [non IIIF]
         color_profile_bytes []: the embedded color profile, if any [non IIIF]
         auth_rules (dict): extra information about authorization [non IIIF]
+        ptiff_enabled (boolean): is ptiff support enabled
+        ptiff: is the image a ptiff
 
     '''
     __slots__ = ('width', 'height', 'scaleFactors', 'sizes', 'tiles',
         'profile', 'service', 'attribution', 'license', 'logo',
-        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules')
+        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules',
+                 'ptiff_enabled', 'ptiff')
 
-    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None):
+    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None, ptiff_enabled=False):
         self.src_img_fp = src_img_fp
         self.src_format = src_format
         self.attribution = attribution
@@ -91,6 +94,8 @@ class ImageInfo(JP2Extractor):
         self.license = license
         self.service = service or {}
         self.auth_rules = auth_rules or {}
+        self.ptiff_enabled = ptiff_enabled
+        self.ptiff = False
 
         # If constructed from JSON, the pixel info will already be processed
         if app:
@@ -144,6 +149,7 @@ class ImageInfo(JP2Extractor):
         new_inst.src_img_fp = j.get('_src_img_fp', '')
         new_inst.src_format = j.get('_src_format', '')
         new_inst.auth_rules = j.get('_auth_rules', {})
+        new_inst.ptiff = j.get('_ptiff', False)
 
         return new_inst
 
@@ -191,6 +197,12 @@ class ImageInfo(JP2Extractor):
         self.color_profile_bytes = None
         self.profile.description['qualities'] = PIL_MODES_TO_QUALITIES[im.mode]
         self.sizes = []
+        if self.ptiff_enabled and im.format == 'TIFF' and im.n_frames > 1:
+            self.ptiff = True
+            for x in range(im.n_frames):
+                im.seek(x)
+                width, height = im.size
+                self.sizes += [{'width': width, 'height': height}]
 
     def _from_jp2(self, fp):
         '''Get info about a JP2.
@@ -247,6 +259,8 @@ class ImageInfo(JP2Extractor):
         d['_src_img_fp'] = self.src_img_fp
         d['_src_format'] = self.src_format
         d['_auth_rules'] = self.auth_rules
+        if self.ptiff:
+            d['_ptiff'] = self.ptiff
         return json.dumps(d, cls=EnhancedJSONEncoder)
 
 

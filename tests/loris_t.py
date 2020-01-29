@@ -96,6 +96,20 @@ class LorisTest(unittest.TestCase):
         self.test_tiff_dims = (839,1080)
         self.test_tiff_sizes = []
 
+        self.test_grid_ptiff_fp = path.join(self.test_img_dir, 'grid_ptiff.tiff')
+        self.test_grid_ptiff_fmt = 'tif'
+        self.test_grid_ptiff_id = 'grid_ptiff.tiff'
+        self.test_grid_ptiff_uri = '%s/%s' % (self.URI_BASE, self.test_grid_ptiff_id)
+        self.test_grid_ptiff_dims = (1000, 1000)
+        self.test_grid_ptiff_sizes = []
+
+        self.test_colored_ptiff_fp = path.join(self.test_img_dir, 'color_coded_ptiff.tif')
+        self.test_colored_ptiff_fmt = 'tif'
+        self.test_colored_ptiff_id = 'color_coded_ptiff.tif'
+        self.test_colored_ptiff_uri = '%s/%s' % (self.URI_BASE, self.test_colored_ptiff_id)
+        self.test_colored_ptiff_dims = (2487, 3385)
+        self.test_colored_ptiff_sizes = []
+
         self.test_png_fp = path.join(self.test_img_dir,'henneken.png')
         self.test_png_fp2 = path.join(self.test_img_dir2,'henneken.png')
         self.test_png_fmt = 'png'
