@@ -400,6 +400,7 @@ class Loris(object):
         impl = self.app_configs['resolver']['impl']
         ResolverClass = self._import_class(impl)
         resolver_config =  self.app_configs['resolver']
+        resolver_config['ptiff'] = self.app_configs['transforms'].get('tif', {}).get('ptiff', False)
         return ResolverClass(resolver_config)
 
     def _load_authorizer(self):
