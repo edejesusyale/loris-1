@@ -321,8 +321,8 @@ def set_content_disposition_header(image_request, response):
     #
     # If the request is for a different format, include both formats.
     #
-    # e.g.  /cats.jpg/…/default.jpg ~> cats.jpg
-    #       /cats.jpg/…/default.png ~> cats.jpg.png
+    # e.g.  /cats.jpg/?/default.jpg ~> cats.jpg
+    #       /cats.jpg/?/default.png ~> cats.jpg.png
     #
     if ident.endswith(".%s" % img_format):
         download_filename = ident

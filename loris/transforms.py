@@ -96,6 +96,9 @@ class _AbstractTransformer(object):
 
         '''
         region_param = image_request.region_param(image_info=image_info)
+        ptiff_handling = image_info.ptiff
+        if ptiff_handling:
+            im = select_from_ptiff(im, image_info, size_param, region_param)
 
         if crop and region_param.canonical_uri_value != 'full':
             # For PIL: "The box is a 4-tuple defining the left, upper, right,

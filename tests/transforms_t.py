@@ -183,6 +183,148 @@ class Test_OPJ_JP2Transformer(loris_t.LorisTest, ColorConversionMixin):
         assert 'JP2 transform process timed out' in response.data.decode('utf8')
 
 
+class Test_PILTransformer_PTiff(loris_t.LorisTest):
+
+    def setUp(self):
+        super(Test_PILTransformer_PTiff, self).setUp()
+
+    def setUpConfig(self, ptiff_enabled):
+        config = get_debug_config('opj')
+        config['resolver']['ptiff'] = ptiff_enabled
+        self.build_client_from_config(config)
+
+    def test_full_ptiff_image_top_right_corner_full(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/full/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (255, 0, 0), 3)
+
+    def test_full_ptiff_image_top_right_corner_size1(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/1243,1692/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (0, 255, 0), 3)
+
+    def test_full_ptiff_image_top_right_corner_size2(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/621,846/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (0, 0, 255), 3)
+
+    def test_full_ptiff_image_top_right_corner_size3(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/310,423/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (255, 255, 0), 3)
+
+    def test_full_ptiff_image_top_right_corner_size4(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/155,211/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (0, 255, 255), 3)
+
+    def test_full_ptiff_image_top_right_corner_size5(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/77,105/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (255, 0, 255), 3)
+
+    def test_full_ptiff_image_top_right_corner_size6(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/38,52/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        assert is_similar_color(image.getpixel((10, 10)), (255, 255, 255), 3)
+
+    def test_cropped_ptiff_image_top_right_corner_size1(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/pct:5,5,50,50/77,105/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        # should get the tile that best matches 154x210
+        assert is_similar_color(image.getpixel((10, 10)), (0, 255, 255), 3)
+
+    def test_cropped_ptiff_image_top_right_corner_size2(self):
+        self.setUpConfig(True)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/pct:5,5,50,50/30,50/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        # should get the tile that best matches 60x100
+        assert is_similar_color(image.getpixel((10, 10)), (255, 0, 255), 3)
+
+    def test_ptiff_image_top_right_corner_size6_ptiff_not_enabled(self):
+        self.setUpConfig(False)
+        ident = self.test_colored_ptiff_id
+        request_path = '/%s/full/38,52/0/default.jpg' % ident
+        image = self.request_image_from_client(request_path)
+        # it should choose the main image since ptiff is disabled
+        assert is_similar_color(image.getpixel((10, 10)), (255, 0, 0), 3)
+
+    def test_grid_crop_ptiff(self):
+        self.setUpConfig(True)
+        s = 76
+        # rotating shouldn't matter since it should be less than one square
+        test_items = [
+            {"x": 100, "y": 100, "rotation": 180, "expected": (171, 43, 102)},
+            {"x": 200, "y": 200, "rotation": 90, "expected": (87, 41, 173)},
+            {"x": 300, "y": 300, "rotation": 180, "expected": (2, 127, 171)},
+            {"x": 400, "y": 400, "rotation": 90, "expected": (79, 97, 47)}
+        ]
+        # These different sizes will select a different tile, but should still have the same results
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "76,76", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((2, 2)), test_item['expected'], 3)
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "full", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((2, 2)), test_item['expected'], 3)
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "20,20", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((2, 2)), test_item['expected'], 3)
+
+    def test_grid_crop_ptiff_larger(self):
+        self.setUpConfig(True)
+        s = 760
+        # don't rotate since larger size will get more than one square
+        test_items = [
+            {"x": 100, "y": 100, "rotation": 0, "expected": (171, 43, 102)},
+            {"x": 200, "y": 200, "rotation": 0, "expected": (87, 41, 173)},
+            {"x": 300, "y": 300, "rotation": 0, "expected": (2, 127, 171)},
+            {"x": 400, "y": 400, "rotation": 0, "expected": (79, 97, 47)}
+        ]
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "760,760", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((5, 5)), test_item['expected'], 4)
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "full", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((5, 5)), test_item['expected'], 4)
+        for test_item in test_items:
+            ident = self.test_grid_ptiff_id
+            region = '%s,%s,%s,%s' % (test_item['x'], test_item['y'], s, s)
+            request_path = '/%s/%s/%s/%s/default.jpg' % (ident, region, "200,200", test_item['rotation'])
+            image = self.request_image_from_client(request_path)
+            assert is_similar_color(image.getpixel((5, 5)), test_item['expected'], 4)
+
 class Test_PILTransformer(loris_t.LorisTest,
                           ColorConversionMixin,
                           _ResizingTestMixin):
