@@ -376,7 +376,7 @@ class SimpleHTTPResolver(_AbstractResolver):
         format_ = self.get_format(cached_file_path, None)
         auth_rules = self.get_auth_rules(ident, cached_file_path)
         ptiff_handling = self.config.get('ptiff', False)
-        return ImageInfo(app=app, src_img_fp=cached_file_path, src_format=format_, auth_rules=auth_rules, ptiff_handling=ptiff_handling)
+        return ImageInfo(app=app, src_img_fp=cached_file_path, src_format=format_, auth_rules=auth_rules, ptiff=ptiff_handling)
 
 
 class TemplateHTTPResolver(SimpleHTTPResolver):
@@ -559,4 +559,4 @@ class SourceImageCachingResolver(_AbstractResolver):
         format_ = self.format_from_ident(ident)
         auth_rules = self.get_auth_rules(ident, cache_fp)
         ptiff_handling = self.config.get('ptiff', False)
-        return ImageInfo(app=app, src_img_fp=cache_fp, src_format=format_, auth_rules=auth_rules, ptiff_handling=ptiff_handling)
+        return ImageInfo(app=app, src_img_fp=cache_fp, src_format=format_, auth_rules=auth_rules, ptiff=ptiff_handling)
