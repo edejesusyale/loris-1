@@ -142,7 +142,8 @@ class SimpleFSResolver(_AbstractResolver):
         source_fp = self.source_file_path(ident)
         format_ = self.format_from_ident(ident)
         auth_rules = self.get_auth_rules(ident, source_fp)
-        return ImageInfo(app=app, src_img_fp=source_fp, src_format=format_, auth_rules=auth_rules)
+        ptiff_handling = self.config.get('ptiff', False)
+        return ImageInfo(app=app, src_img_fp=source_fp, src_format=format_, auth_rules=auth_rules, ptiff=ptiff_handling)
 
 
 class ExtensionNormalizingFSResolver(SimpleFSResolver):
@@ -374,7 +375,8 @@ class SimpleHTTPResolver(_AbstractResolver):
             cached_file_path = self.copy_to_cache(ident)
         format_ = self.get_format(cached_file_path, None)
         auth_rules = self.get_auth_rules(ident, cached_file_path)
-        return ImageInfo(app=app, src_img_fp=cached_file_path, src_format=format_, auth_rules=auth_rules)
+        ptiff_handling = self.config.get('ptiff', False)
+        return ImageInfo(app=app, src_img_fp=cached_file_path, src_format=format_, auth_rules=auth_rules, ptiff_handling=ptiff_handling)
 
 
 class TemplateHTTPResolver(SimpleHTTPResolver):
@@ -556,4 +558,5 @@ class SourceImageCachingResolver(_AbstractResolver):
         cache_fp = self.cache_file_path(ident)
         format_ = self.format_from_ident(ident)
         auth_rules = self.get_auth_rules(ident, cache_fp)
-        return ImageInfo(app=app, src_img_fp=cache_fp, src_format=format_, auth_rules=auth_rules)
+        ptiff_handling = self.config.get('ptiff', False)
+        return ImageInfo(app=app, src_img_fp=cache_fp, src_format=format_, auth_rules=auth_rules, ptiff_handling=ptiff_handling)

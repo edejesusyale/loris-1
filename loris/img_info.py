@@ -82,9 +82,9 @@ class ImageInfo(JP2Extractor):
     '''
     __slots__ = ('width', 'height', 'scaleFactors', 'sizes', 'tiles',
         'profile', 'service', 'attribution', 'license', 'logo',
-        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules')
+        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules', 'ptiff')
 
-    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None):
+    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None, ptiff=False):
         self.src_img_fp = src_img_fp
         self.src_format = src_format
         self.attribution = attribution
@@ -92,6 +92,7 @@ class ImageInfo(JP2Extractor):
         self.license = license
         self.service = service or {}
         self.auth_rules = auth_rules or {}
+        self.ptiff = ptiff
 
         # If constructed from JSON, the pixel info will already be processed
         if app:
@@ -192,6 +193,11 @@ class ImageInfo(JP2Extractor):
         self.color_profile_bytes = None
         self.profile.description['qualities'] = PIL_MODES_TO_QUALITIES[im.mode]
         self.sizes = []
+        if self.ptiff:
+            for x in range(im.n_frames):
+                im.seek(x)
+                width, height = im.size
+                self.sizes += [{'width': width, 'height': height}]
 
     def _from_jp2(self, fp):
         '''Get info about a JP2.

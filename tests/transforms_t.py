@@ -9,6 +9,9 @@ from loris.webapp import get_debug_config
 from tests import loris_t
 
 
+def is_similar_color( pixel_a, pixel_b, threshold):
+    return abs(pixel_a[0] - pixel_b[0]) + abs(pixel_a[1] - pixel_b[1]) + abs(pixel_a[2] - pixel_b[2]) <= threshold
+
 class ColorConversionMixin:
     """
     Adds a helper method for testing that a transformer can edit the

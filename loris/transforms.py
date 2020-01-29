@@ -47,6 +47,61 @@ def _validate_color_profile_conversion_config(config):
         )
 
 
+def select_from_ptiff(im, image_info, size_param, region_param):
+    index = 0
+    if len(image_info.sizes) == 0:
+        return im
+
+    wh = [int(size_param.w), int(size_param.h)]
+    im_dims = []
+
+    for i in range(len(image_info.sizes)):
+        im_dims += [list(image_info.sizes[i].values())]
+
+    heights = [el[1] for el in im_dims]  # all the heights in ptiff
+    crop_height = region_param.pixel_h  # requested image height
+    max_height = heights[0]  # largest height in ptiff
+    req_height = wh[1]
+
+    widths = [el[0] for el in im_dims]  # all the widths in ptiff
+    crop_width = region_param.pixel_w  # requested image width
+    max_width = widths[0]  # largest width in ptiff
+    req_width = wh[0]
+
+    desired_wh = [0, 0]  # desired width and height
+
+    desired_wh[0] = (max_width / crop_width) * req_width
+    desired_wh[1] = (max_height / crop_height) * req_height
+    try:
+        index = im_dims.index(desired_wh)
+    except ValueError:
+        try:
+            index = max([im_dims.index(el) for el in im_dims if el[0] >= desired_wh[0] and el[1] >= desired_wh[1]])
+        except ValueError:
+            pass
+
+    im.seek(index)  # equip the appropriate tiff
+    return im
+
+
+def ptiff_scale_crop_box(box, im, image_info):
+    index = im.tell()
+    if index == 0:
+        return box
+
+    max_width = image_info.sizes[0]['width']
+    index_width = image_info.sizes[index]['width']
+
+    max_height = image_info.sizes[0]['height']
+    index_height = image_info.sizes[index]['height']
+
+    crop_w_scale = float(index_width) / max_width
+    crop_h_scale = float(index_height) / max_height
+
+    scaled_box = [x * crop_w_scale if box.index(x) % 2 == 0 else x * crop_h_scale for x in box]
+    return tuple(scaled_box)
+
+
 class _AbstractTransformer(object):
     def __init__(self, config):
         _validate_color_profile_conversion_config(config)
@@ -95,7 +150,9 @@ class _AbstractTransformer(object):
             void (puts an image at target_fp)
 
         '''
+        size_param = image_request.size_param(image_info=image_info)
         region_param = image_request.region_param(image_info=image_info)
+
         ptiff_handling = image_info.ptiff
         if ptiff_handling:
             im = select_from_ptiff(im, image_info, size_param, region_param)
@@ -110,10 +167,10 @@ class _AbstractTransformer(object):
                 region_param.pixel_y + region_param.pixel_h
             )
             logger.debug('cropping to: %r', box)
+            if ptiff_handling:
+                box = ptiff_scale_crop_box(box, im, image_info)
             im = im.crop(box)
 
-        # resize
-        size_param = image_request.size_param(image_info=image_info)
 
         if size_param.canonical_uri_value != 'full':
             wh = [int(size_param.w), int(size_param.h)]
