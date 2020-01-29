@@ -1,0 +1,8 @@
+Sizes	Color:
+2487 x 3385	ff0000
+1243 x 1692	00ff00
+621 x 846	0000ff
+310 x 423	ffff00
+155 x 211	00ffff
+77 x 105	ff00ff
+38 x 52	ffffff 
