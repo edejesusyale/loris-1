@@ -193,7 +193,7 @@ class ImageInfo(JP2Extractor):
         self.color_profile_bytes = None
         self.profile.description['qualities'] = PIL_MODES_TO_QUALITIES[im.mode]
         self.sizes = []
-        if self.ptiff:
+        if self.ptiff and im.format == 'TIFF':
             for x in range(im.n_frames):
                 im.seek(x)
                 width, height = im.size
