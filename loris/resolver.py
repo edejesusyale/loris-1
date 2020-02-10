@@ -6,6 +6,7 @@ from contextlib import closing
 import glob
 import json
 from logging import getLogger
+import os
 from os.path import join, exists, dirname, split
 from os import remove
 from shutil import copy
@@ -18,7 +19,7 @@ import requests
 from loris import constants
 from loris.identifiers import CacheNamer, IdentRegexChecker
 from loris.loris_exception import ResolverException, ConfigError
-from loris.utils import mkdir_p, safe_rename
+from loris.utils import safe_rename
 from loris.img_info import ImageInfo
 
 
@@ -315,7 +316,7 @@ class SimpleHTTPResolver(_AbstractResolver):
         assert source_url is not None
 
         cache_dir = self.cache_dir_path(ident)
-        mkdir_p(cache_dir)
+        os.makedirs(cache_dir, exist_ok=True)
 
         with closing(requests.get(source_url, stream=True, **options)) as response:
             if not response.ok:
@@ -533,7 +534,7 @@ class SourceImageCachingResolver(_AbstractResolver):
         source_fp = self.source_file_path(ident)
         cache_fp = self.cache_file_path(ident)
 
-        mkdir_p(dirname(cache_fp))
+        os.makedirs(dirname(cache_fp), exist_ok=True)
         copy(source_fp, cache_fp)
         logger.info("Copied %s to %s", source_fp, cache_fp)
 
