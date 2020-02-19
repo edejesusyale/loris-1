@@ -81,9 +81,9 @@ class ImageInfo(JP2Extractor):
     '''
     __slots__ = ('width', 'height', 'scaleFactors', 'sizes', 'tiles',
         'profile', 'service', 'attribution', 'license', 'logo',
-        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules', 'ptiff')
+        'src_img_fp', 'src_format', 'color_profile_bytes', 'auth_rules', 'ptiff_enabled')
 
-    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None, ptiff=False):
+    def __init__(self, app=None, service=None, attribution=None, license=None, logo=None, src_img_fp="", src_format="", auth_rules=None, ptiff_enabled=False):
         self.src_img_fp = src_img_fp
         self.src_format = src_format
         self.attribution = attribution
@@ -91,7 +91,7 @@ class ImageInfo(JP2Extractor):
         self.license = license
         self.service = service or {}
         self.auth_rules = auth_rules or {}
-        self.ptiff = ptiff
+        self.ptiff_enabled = ptiff_enabled
 
         # If constructed from JSON, the pixel info will already be processed
         if app:
@@ -192,7 +192,7 @@ class ImageInfo(JP2Extractor):
         self.color_profile_bytes = None
         self.profile.description['qualities'] = PIL_MODES_TO_QUALITIES[im.mode]
         self.sizes = []
-        if self.ptiff and im.format == 'TIFF' and im.n_frames > 1:
+        if self.ptiff_enabled and im.format == 'TIFF' and im.n_frames > 1:
             for x in range(im.n_frames):
                 im.seek(x)
                 width, height = im.size

@@ -153,7 +153,7 @@ class _AbstractTransformer(object):
         size_param = image_request.size_param(image_info=image_info)
         region_param = image_request.region_param(image_info=image_info)
 
-        ptiff_handling = image_info.ptiff
+        ptiff_handling = image_info.ptiff_enabled and image_info.src_format == 'tif'
         if ptiff_handling:
             im = select_from_ptiff(im, image_info, size_param, region_param)
 
