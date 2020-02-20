@@ -49,7 +49,6 @@ def _validate_color_profile_conversion_config(config):
 
 
 def select_from_ptiff(im, image_info, size_param, region_param):
-    index = 0
     if len(image_info.sizes) == 0:
         return im
 
@@ -73,10 +72,14 @@ def select_from_ptiff(im, image_info, size_param, region_param):
     desired_wh[0] = (max_width / crop_width) * req_width
     desired_wh[1] = (max_height / crop_height) * req_height
 
-    index = max([im_dims.index(el) for el in im_dims if el[0] >= desired_wh[0] and el[1] >= desired_wh[1]])
+    index = 0
+    #try to find the closest layer with dims that are bigger than the request
+    try:
+        index = max([im_dims.index(el) for el in im_dims if el[0] >= desired_wh[0] and el[1] >= desired_wh[1]])
+    except ValueError:
+        pass # if none are bigger than request, use the biggest image at index = 0
     im.seek(index)  # equip the appropriate tiff
     return im
-
 
 def ptiff_scale_crop_box(box, im, image_info):
     index = im.tell()
