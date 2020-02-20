@@ -7,7 +7,6 @@ from os import path
 import platform
 import subprocess
 import tempfile
-import pdb
 
 
 from PIL import Image
@@ -54,7 +53,6 @@ def select_from_ptiff(im, image_info, size_param, region_param):
     if len(image_info.sizes) == 0:
         return im
 
-    wh = [int(size_param.w), int(size_param.h)]
     im_dims = []
 
     for i in range(len(image_info.sizes)):
@@ -63,25 +61,19 @@ def select_from_ptiff(im, image_info, size_param, region_param):
     heights = [el[1] for el in im_dims]  # all the heights in ptiff
     crop_height = region_param.pixel_h  # requested image height
     max_height = heights[0]  # largest height in ptiff
-    req_height = wh[1]
+    req_height = int(size_param.h)
 
     widths = [el[0] for el in im_dims]  # all the widths in ptiff
     crop_width = region_param.pixel_w  # requested image width
     max_width = widths[0]  # largest width in ptiff
-    req_width = wh[0]
+    req_width = int(size_param.w)
 
     desired_wh = [0, 0]  # desired width and height
 
     desired_wh[0] = (max_width / crop_width) * req_width
     desired_wh[1] = (max_height / crop_height) * req_height
-    try:
-        index = im_dims.index(desired_wh)
-    except ValueError:
-        try:
-            index = max([im_dims.index(el) for el in im_dims if el[0] >= desired_wh[0] and el[1] >= desired_wh[1]])
-        except ValueError:
-            pass
 
+    index = max([im_dims.index(el) for el in im_dims if el[0] >= desired_wh[0] and el[1] >= desired_wh[1]])
     im.seek(index)  # equip the appropriate tiff
     return im
 
