@@ -772,7 +772,7 @@ if __name__ == '__main__':
 
     app = create_app(debug=True) # or 'opj'
 
-    run_simple('localhost', 5004, app, use_debugger=True, use_reloader=True)
+    run_simple('0.0.0.0', 5004, app, use_debugger=True, use_reloader=False)
     # To debug ssl:
     # run_simple('localhost', 5004, app, use_debugger=True, use_reloader=True,
     #     ssl_context='adhoc')
