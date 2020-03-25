@@ -23,6 +23,11 @@ RUN python3.6 -m pip install responses
 RUN python3.6 -m pip install attrs
 RUN python3.6 -m pip install cryptography
 # Install loris
+RUN wget --no-check-certificate https://github.com/edejesusyale/loris-1/archive/ptiff_docker.zip \
+    && unzip ptiff_docker \
+    && mv loris-1-ptiff_docker /opt/loris \
+    && rm ptiff_docker.zip
+
 # Install kakadu
 RUN wget --no-check-certificate https://kakadusoftware.com/wp-content/uploads/2020/02/KDU803_Demo_Apps_for_Linux-x86-64_200210.zip \
     && unzip KDU803_Demo_Apps_for_Linux-x86-64_200210 \
