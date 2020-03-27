@@ -22,6 +22,7 @@ RUN python3.6 -m pip install PyJWT
 RUN python3.6 -m pip install responses
 RUN python3.6 -m pip install attrs
 RUN python3.6 -m pip install cryptography
+RUN python3.6 -m pip install boto3
 # Install loris
 RUN wget --no-check-certificate https://github.com/edejesusyale/loris-1/archive/ptiff_docker.zip \
     && unzip ptiff_docker \
@@ -54,7 +55,7 @@ RUN apt-get install -y  libjpeg-turbo8-dev libfreetype6-dev zlib1g-dev \
 WORKDIR /opt
 
 # Get loris and unzip.
-COPY . loris/
+#COPY . loris/
 
 RUN useradd -d /var/www/loris -s /sbin/false loris
 
@@ -70,4 +71,4 @@ WORKDIR /opt/loris/
 RUN sed -i -- 's/localhost/0.0.0.0/g' loris/webapp.py
 
 EXPOSE 5004
-CMD ["python3.6","loris/webapp.py"]
+CMD ["bash" , "startserver.sh"]
