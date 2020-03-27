@@ -56,7 +56,9 @@ def get_debug_config(debug_jp2_transformer):
     config['loris.Loris']['enable_caching'] = True
     config['img.ImageCache']['cache_dp'] = '/tmp/loris/cache/img'
     config['img_info.InfoCache']['cache_dp'] = '/tmp/loris/cache/info'
-    config['resolver']['impl'] = 'loris.resolver.SimpleFSResolver'
+    #config['resolver']['impl'] = 'loris.resolver.SimpleFSResolver'
+    config['resolver']['impl'] = 'loris.s3resolver.S3Resolver'
+    #source_root='s3://yale-image-samples.s3.amazonaws.com/originals/'
     config['resolver']['src_img_root'] = path.join(project_dp,'tests','img')
     config['transforms']['target_formats'] = [ 'jpg', 'png', 'gif', 'webp', 'tif']
 
