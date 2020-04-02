@@ -4,17 +4,17 @@ dirname="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [ -z "$BUCKET" ]
 then
-      echo "\$var is empty"
+      echo "\$BUCKET is empty"
       exit 1
 fi
 if [ -z "$AWS_ACCESS_KEY_ID" ]
 then
-      echo "\$var is empty"
+      echo "\$AWS_ACCESS_KEY_ID is empty"
       exit 1
 fi
 if [ -z "$AWS_SECRET_ACCESS_KEY" ]
 then
-      echo "\$var is empty"
+      echo "\$AWS_SECRET_ACCESS_KEY is empty"
       exit 1
 fi
 
