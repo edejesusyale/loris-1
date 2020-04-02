@@ -23,6 +23,6 @@ echo
 
 sed -i  "s user_access_key ${AWS_ACCESS_KEY_ID} g" ${dirname}/loris/s3resolver.py
 sed -i  "s user_secret_key ${AWS_SECRET_ACCESS_KEY} g" ${dirname}/loris/s3resolver.py
-sed -i  "s bucket_name ${BUCKET} g" ${dirname}/etc/loris.conf
+sed -i  "s bucket_name ${BUCKET} g" ${dirname}/etc/loris2.conf
 
 python3.6 ${dirname}/loris/webapp.py
