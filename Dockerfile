@@ -10,19 +10,18 @@ RUN apt-get -y install python3.6 python3-distutils
 RUN wget https://bootstrap.pypa.io/get-pip.py \
     && python3.6 get-pip.py
 RUN apt-get install -y python-dev python-setuptools python-pip
-RUN python3.6 -m pip install --upgrade pip
-RUN python3.6 -m pip install Werkzeug
-RUN python3.6 -m pip install configobj
-RUN python3.6 -m pip install orm
-RUN python3.6 -m pip install configobj
-RUN python3.6 -m pip install requests
-RUN python3.6 -m pip install mock
-RUN python3.6 -m pip install encode
-RUN python3.6 -m pip install PyJWT
-RUN python3.6 -m pip install responses
-RUN python3.6 -m pip install attrs
-RUN python3.6 -m pip install cryptography
-RUN python3.6 -m pip install boto3
+RUN pip install Werkzeug \
+    && pip install configobj \
+    && pip install orm  \
+    && pip install configobj \
+    && pip install requests \
+    && pip install mock \
+    && pip install encode \
+    && pip install PyJWT \
+    && pip install responses \
+    && pip install attrs \
+    && pip install cryptography \
+    && pip install boto3
 # Install loris
 RUN wget --no-check-certificate https://github.com/edejesusyale/loris-1/archive/ptiff_docker.zip \
     && unzip ptiff_docker \
@@ -43,7 +42,7 @@ RUN ln -s /usr/lib/`uname -i`-linux-gnu/libfreetype.so /usr/lib/ \
 	&& ln -s /usr/lib/`uname -i`-linux-gnu/libjpeg.so /usr/lib/ \
 	&& ln -s /usr/lib/`uname -i`-linux-gnu/libz.so /usr/lib/ \
 	&& ln -s /usr/lib/`uname -i`-linux-gnu/liblcms.so /usr/lib/ \
-	&& ln -s /usr/lib/`uname -i`-linux-gnu/libtiff.so /usr/lib/ \
+	&& ln -s /usr/lib/`uname -i`-linux-gnu/libtiff.so /usr/lib/
 
 RUN echo "/usr/local/lib" >> /etc/ld.so.conf && ldconfig
 

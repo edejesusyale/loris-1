@@ -2,11 +2,27 @@
 # Ask the user for login details
 dirname="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-read -p 'accesskey: ' accesskey
-read -p 'secretkey: ' secretkey
+if [ -z "$BUCKET" ]
+then
+      echo "\$var is empty"
+      exit [n]
+fi
+if [ -z "$AWS_ACCESS_KEY_ID" ]
+then
+      echo "\$var is empty"
+      exit [n]
+fi
+if [ -z "$AWS_SECRET_ACCESS_KEY" ]
+then
+      echo "\$var is empty"
+      exit [n]
+fi
+
+
 echo
 
-sed -i  "s user_access_key ${accesskey} g" ${dirname}/loris/s3resolver.py
-sed -i  "s user_secret_key ${secretkey} g" ${dirname}/loris/s3resolver.py
+sed -i  "s user_access_key ${AWS_ACCESS_KEY_ID} g" ${dirname}/loris/s3resolver.py
+sed -i  "s user_secret_key ${AWS_SECRET_ACCESS_KEY} g" ${dirname}/loris/s3resolver.py
+sed -i  "s bucket_name ${BUCKET} g" ${dirname}/etc/loris.conf
 
 python3.6 ${dirname}/loris/webapp.py
